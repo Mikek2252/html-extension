@@ -1,3 +1,22 @@
 /**
  * Place your custom CSS styles here.
  **/
+.ui {
+	position: fixed;
+	top: 0px;
+	right: 0px;
+	text-align: left;
+	width: 300px;
+	height: 100%;
+	font-family: 'arial' !important;
+}
+
+.ui ul {
+	list-style: none;
+}
+
+.ui li {
+	text-align: left;
+	list-style: none;
+	font-size: 20px;
+}

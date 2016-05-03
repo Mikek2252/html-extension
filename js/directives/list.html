@@ -1,0 +1,13 @@
+<div class="item" ng-repeat="element in elements">
+	<ul>
+		<li>
+			Name: {{element.name}}
+		</li>
+		<li>
+			Type: {{element.type}}
+		</li>
+		<li ng-if="element.hasChild">
+			<ngList el-data="{{element}}"></ngList>
+		</li>
+	</ul>
+</div>
