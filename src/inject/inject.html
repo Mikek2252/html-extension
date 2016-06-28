@@ -1,7 +1,132 @@
+<style>
+	.ui {
+		position: fixed;
+		top: 0px;
+		right: 0px;
+		text-align: left;
+		width: 300px;
+		height: 100%;
+		font-family: 'arial' !important;
+		background: grey;
+		padding: 20px;
+		resize:both;
+		overflow:auto; /* something other than visible */
+		overflow-y: scroll;
+	}
+
+	.ui ul {
+		list-style: none;
+	}
+
+	#ui-content {
+		padding-bottom: 20px;
+	}
+
+	.ui li {
+		text-align: left;
+		list-style: none;
+		font-size: 20px !important;
+		font-family: 'arial' !important;
+		color: #000000 !important;
+		cursor: pointer !important;
+	}
+
+	.ui .selected {
+		background: blue;
+	}
+	.outline {
+		border: 1px solid blue;
+	}
+	.element-nav {
+		width: 350px;
+		text-align: center;
+		position: fixed;
+		bottom: 0px;
+		right: 340px;
+		padding: 20px;
+	}
+
+	.row {
+		display: block;
+	}
+
+	.btn {
+		display: inline-block;
+		font-size: 16px;
+		margin: 0px 5px;
+		padding: 10px;
+		min-width: 90px;
+	}
+
+	.number {
+		display: inline-block;
+		margin: 10px;
+		font-size: 14px;
+		width: 50px;
+		text-align: center;
+	}
+
+	.rotation {
+		text-align: center;
+		position: fixed;
+		bottom: 300px;
+		right: 340px;
+		padding: 20px;
+	}
+
+	#rotation-box {
+		height: 300px;
+		width: 300px;
+		border: 1px solid #000000;
+		position: relative;
+	}
+	#point {
+		position: absolute;
+		height: 5px;
+		width: 5px;
+		background: blue;
+	}
+	.transformClass {
+		position: absolute;
+		left: 0px;
+		top: 0px;
+		-ms-transform: rotate(0deg); /* IE 9 */
+		-webkit-transform: rotate(0deg);
+		transform: rotate(0deg);
+		transition: all 1s;
+	}
+</style>
 <div class="ui">
 	<header>
 		<h1>*Insert really cool name*</h1>
 	</header>
 	<div id="ui-content">
+	</div>
+</div>
+<div class="element-nav">
+	<div class="row">
+		<button id="up" class="btn btn-up">UP</button><br>
+		<input id="attr-top" class="number" type="text" value="0" />
+	</div>
+	<div class="row">
+		<button id="left" class="btn btn-left">LEFT</button>
+		<input id="attr-left" class="number" type="text" value="0" />
+		<input id="attr-right" class="number" type="text" value="0" />
+		<button id="right" class="btn btn-right">RIGHT</button>
+	</div>
+	<div class="row">
+		<input id="attr-bottom" class="number" type="text" value="0" /><br>
+		<button id="down" class="btn btn-down">DOWN</button>
+	</div>
+</div>
+<div class="rotation">
+	<div class="row">
+		<div id="rotation-box">
+
+		</div>
+	</div>
+	<div class="row">
+		<button id="start" class="btn">Start</button>
+		<button id="stop" class="btn">Stop</button>
 	</div>
 </div>
