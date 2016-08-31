@@ -3,24 +3,62 @@ $( document ).ready(function() {
 	//Declare global varibles
 	var element;
 	var running;
-			var rotation = 0;
+	var rotation = 0;
+	var selectOverlay = $('.select-overlay');
+	var currentTab = "position";
+
+	//Tab Switching
+	$('.tabs li').click(function() {
+		var tab_id = $(this).find("a").attr('data-tab');
+
+		$('.tabs li.active').removeClass("active");
+		$('.tab-content').removeClass("hide");
+
+		$(this).addClass("active");
+		$('.tab-content:not(#'+tab_id+')').addClass("hide");
+		//Hide overlay if rotation tab
+		switch(tab_id){
+			case "rotation":
+				selectOverlay.hide();
+				break;
+			case "position":
+				selectOverlay.show();
+		}
+		currentTab = tab_id;
+		transformWindow();
+	});
+
 	//Check for click
-	$('.ui a').on( 'click', function(e) {
+	$('#code a').on( 'click', function(e) {
 		//Get id of element
 		var id = $(this).attr("data-value");
 
 		//Remove classes from previously selected
 		$(".outline").removeClass('outline');
 		$(".selected").removeClass('selected');
-
+		selectOverlay.hide()
 		//Add classes to new selected elements
 		$(this).addClass('selected');
 		$("#"+id).addClass('outline');
 
+
+
 		//Save selected element and get details
 		element = new elementSel($("#"+id));
+		Overlay(element.el);
+		switch(currentTab){
+			case "rotation":
+				selectOverlay.hide();
+
+				break;
+			case "position":
+				selectOverlay.show();
+		}
+
 		getElementsDetails();
+		//Rotation Window
 		transformWindow();
+		addCrosshair();
 	});
 
 	//Apply data to view
@@ -159,6 +197,7 @@ $( document ).ready(function() {
 		element.el.css(Xalign, x + "px");
 		element.el.css(Yalign, y + "px");
 		getElementsDetails();
+		Overlay(element.el);
 	}
 
 	//Define element Constuction
@@ -174,6 +213,9 @@ $( document ).ready(function() {
 			x: transXY[0],
 			y: transXY[1].trim()
 		};
+		//Store Width and Height
+		this.width = el.width();
+		this.height = el.height();
 	}
 	//Define constructor for element
 	elementSel.prototype = {
@@ -200,52 +242,88 @@ $( document ).ready(function() {
 		var rotateObject = element.el.clone().removeAttr("class");
 		rotateObject = rotateObject.removeAttr("id");
 		rotateObject = rotateObject.removeAttr("style");
+		//Set the Workspace size to center object only if the user is using rotation mode
+		if(currentTab === "rotation") {
+			$('#rotation').css("height",+element.height+"px");
+			$('#rotation').css("width",+element.width+"px");
+		}
 		//Empty rotation box
-		$("#rotation-box").empty();
+		$("#rotation").empty();
 		//Add selected element
-		$("#rotation-box").append(rotateObject);
+		$("#rotation").append(rotateObject);
+
 		rotateObject.addClass("transformClass");
 		rotateObject.css("transform-origin",element.transOrigin.x+"px "+element.transOrigin.y+"px")
 		//Create visual transform point
-		$("#rotation-box").append($("<div id='point' style='left: "+element.transOrigin.x+"px; top: "+element.transOrigin.y+"px;'></div>"));
+		$("#rotation").append($("<div id='point' style='left: "+element.transOrigin.x+"px; top: "+element.transOrigin.y+"px;'></div>"));
 	}
 
+	//Selection overlay
+	function Overlay(selection){
+		var rect = selection.offset();
+		selectOverlay.height(selection.height());
+		selectOverlay.width(selection.width());
+		selectOverlay.css("top", 1+ parseFloat(rect.top) +"px");
+		selectOverlay.css("left", 1+ parseFloat(rect.left) +"px");
+	}
 
 	//Rotation Listeners
 	$("#start").click(function(){
+		$("#rotation").children().css('transition', "all 1s");
 		running = true;
 		rotate();
 		function rotate(){
 			rotation += 5;
-			$("#rotation-box").children().rotate(rotation);
+			$("#rotation").children().rotate(rotation);
 			setTimeout(function(){
-				if (running) {
+				if(running){
 					rotate();
 				}
 			}, 100);
 		}
 	})
 	$("#stop").click(function(){
-		running = false;
 		rotation = 0;
-		$("#rotation-box").children().rotate(rotation);
+		running = false;
+		$("#rotation").children().css('transition', "none");
+		$("#rotation").children().rotate(rotation);
 	})
 
+
+	$("#rotation").on('mousemove', function(e){
+		console.log("HELLO");
+		var hoverX = e.pageX,
+				hoverY = e.pageY,
+				offset;
+
+		offset = $(this).offset();
+
+		$("#crosshair").children(0).css("top", hoverY - offset.top);
+		$("#crosshair").children(1).css("left", hoverX - offset.left);
+
+	})
+
+
+
+
 		//Check for clicks on rotation element
-	$("#rotation-box").on("click", function(e){
+	$("#rotation").on("click", function(e){
 		//Find where the user has clicked
 		var clickX = e.pageX,
 				clickY = e.pageY,
-				list,
-				$list,
-				offset,
-				range;
+				offset;
 
 		offset = $(this).offset();
 
 		element.transOrigin.x =	clickX - offset.left;
 		element.transOrigin.y = clickY - offset.top;
-		transformWindow();
+
+		$('.transformClass').css("transform-origin",element.transOrigin.x+"px "+element.transOrigin.y+"px")
+		$('#point').css("left",element.transOrigin.x);
+		$('#point').css("top",element.transOrigin.y);
+
+		//Add rotation input fields
+
 	});
 
 	//Additional JQuery function
@@ -256,4 +334,19 @@ $( document ).ready(function() {
 								 'transform' : 'rotate('+ degrees +'deg)'});
 		return $(this);
 };
+
+	function addCrosshair(){
+		console.log("ping");
+		$('#rotation').append("<div id='crosshair'><div></div><div></div></div>");
+	}
+
+	function removeCrosshair() {
+		$("#crosshair").remove();
+	}
+
 });
+	//Probably don't need this
+	function resizeEl(el, width, height) {
+		el.width(width);
+		el.height(height);
+	}
